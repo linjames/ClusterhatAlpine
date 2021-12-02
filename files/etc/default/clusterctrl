@@ -30,7 +30,7 @@
 
 
 # LINK - Link rpiboot boot directory in /var/lib/clusterhat/boot/ to /var/lib/clusterhat/nfs/pX/boot/ on init
-LINK=1
+LINK=0
 
 # CLUSTERHAT_SIZE - Number of Pi Zeros in your ClusterHAT (defaults to 4 if ClusterHAT exists and not set)
 #CLUSTERHAT_SIZE=4
