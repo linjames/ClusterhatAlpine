@@ -7,7 +7,10 @@ depend() {
 }
 
 start() {
-        if [ -s /etc/hostname ] ; then
+        KOPT_hostname=$( sed "s#.*:\(p.*\):usb0.10.*#\1#" /proc/cmdline )
+        if [ -n $KOPT_hostname ] ; then
+                opts="$KOPT_hostname"
+        elif [ -s /etc/hostname ] ; then
                 opts="-F /etc/hostname"
         else
                 opts="${hostname:-localhost}"
