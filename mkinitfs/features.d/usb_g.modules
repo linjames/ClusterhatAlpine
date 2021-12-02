@@ -1,0 +1,12 @@
+kernel/drivers/uio/uio.ko
+kernel/drivers/uio/uio_pdrv_genirq.ko
+kernel/drivers/usb/dwc2/dwc2.ko
+kernel/drivers/usb/gadget/function/u_ether.ko
+kernel/drivers/usb/gadget/function/u_serial.ko
+kernel/drivers/usb/gadget/function/usb_f_acm.ko
+kernel/drivers/usb/gadget/function/usb_f_ecm.ko
+kernel/drivers/usb/gadget/function/usb_f_rndis.ko
+kernel/drivers/usb/gadget/libcomposite.ko
+kernel/drivers/usb/gadget/udc/udc-core.ko
+kernel/drivers/usb/roles/roles.ko
+
