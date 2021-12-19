@@ -7,6 +7,5 @@ kernel/drivers/usb/gadget/function/usb_f_acm.ko
 kernel/drivers/usb/gadget/function/usb_f_ecm.ko
 kernel/drivers/usb/gadget/function/usb_f_rndis.ko
 kernel/drivers/usb/gadget/libcomposite.ko
-kernel/drivers/usb/gadget/udc/udc-core.ko
 kernel/drivers/usb/roles/roles.ko
-
+kernel/drivers/usb/gadget/udc/udc-core.ko
