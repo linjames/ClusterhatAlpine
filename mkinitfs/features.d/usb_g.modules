@@ -8,4 +8,12 @@ kernel/drivers/usb/gadget/function/usb_f_ecm.ko
 kernel/drivers/usb/gadget/function/usb_f_rndis.ko
 kernel/drivers/usb/gadget/libcomposite.ko
 kernel/drivers/usb/roles/roles.ko
-kernel/drivers/usb/gadget/udc/udc-core.ko
+kernel/net/802
+kernel/net/802/garp.ko
+kernel/net/802/stp.ko
+kernel/net/8021q
+kernel/net/8021q/8021q.ko
+kernel/net/ipv6
+kernel/net/ipv6/ipv6.ko
+kernel/net/llc
+kernel/net/llc/llc.ko

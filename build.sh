@@ -1,4 +1,4 @@
-#! /usr/bin/sh
+#! /usr/bin/bash
 # save current directory
 cwd=$(pwd)
 
@@ -13,7 +13,8 @@ tar -xvf alpine-rpi-3.15.0-armhf.tar.gz -C /var/lib/clusterctrl/nfs/boot
 # 3. remove fluff
 cd /var/lib/clusterctrl/nfs/boot
 # I like to remove all unused files by pi zero. Change below lines if you're using pi zero 2 
-rm -f *rpi-{1,2,3,4,a,b,cm}*.dtb
+rm *rpi-{1,2,3,4,a,b,cm}*.dtb
+rm boot/*rpi2
  
 # 4. copy fixup_cd and start_cd
 # need below 2 files to be able to set gpu_mem=16
