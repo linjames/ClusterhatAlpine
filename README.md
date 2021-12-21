@@ -13,6 +13,13 @@ git clone https://github.com/linjames/ClusterhatAlpine
 cd ClusterhatAlpine
 ./build.sh
 ```
+
+## Create local mirror of alpine linux packages
+  Just copy alpine-mirror to /etc/cron.daily
+  ```
+  cp alpine-mirror /etc/cron.daily
+  ```
+
 ## lbu commit
   At the moment, no nfs mount yet. You can still backup using ssh from master
   
@@ -21,7 +28,8 @@ cd ClusterhatAlpine
   ```
 
 ## TODO
-  1. Better overlay files, like adding nfs-utils package so lbu commit writes back to nfs
-  2. Switch to dropbear, and use ssh-keygen for ssh authentication
-  3. install proper packages and actually do something 
+  1. Remove hard coded version
+  2. Better overlay files, like adding nfs-utils package so lbu commit writes back to nfs
+  3. Switch to dropbear, and use ssh-keygen for ssh authentication
+  4. install proper packages and actually do something useful
 
