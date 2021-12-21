@@ -5,7 +5,7 @@ pushd
 cd /tmp
 
 # 0. for my server
-apt-get install screen tmux sysstat ifstat conspy
+# apt-get install -y tmux sysstat ifstat conspy
 
 # 1. install lighttpd
 apt-get install -y lighttpd 
