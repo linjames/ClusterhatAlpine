@@ -1,9 +1,8 @@
 #! /usr/bin/bash
 # save current directory
 cwd=$(pwd)
-pushd 
-cd /tmp
 
+cd /tmp
 # 0. for my server
 # apt-get install -y tmux sysstat ifstat conspy
 
