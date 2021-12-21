@@ -7,7 +7,8 @@
   Do your regular setup, like raspi-config and apt-get --allow-releaseinfo-change update && apt-get dist-upgrade
 
 ```
-apt-get install git
+sudo -s
+cd
 git clone https://github.com/linjames/ClusterhatAlpine
 cd ClusterhatAlpine
 ./build.sh
