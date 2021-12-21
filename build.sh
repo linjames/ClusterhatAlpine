@@ -113,6 +113,6 @@ EOF
 	echo "172.19.180.$p_num    p$p_num" >> /etc/hosts
 done
 
-rm /tmp/p1.p1.apkovl.tar.gz
+rm /tmp/p1.apkovl.tar.gz
 
 
