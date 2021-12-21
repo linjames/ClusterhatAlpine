@@ -32,5 +32,5 @@ cd ClusterhatAlpine
   3. Switch to dropbear, and use ssh-keygen for ssh authentication
   4. install proper packages and actually do something useful
 
-## Attribution
-  usb_gadget gadget function in mkinitfs/initramfs-init is copied from here: https://github.com/burtyb/clusterhat-image/blob/master/files/usr/share/initramfs-tools/scripts/nfs-top/00_clusterctrl
+## Credit
+  usb_gadget function in mkinitfs/initramfs-init is copied from here: https://github.com/burtyb/clusterhat-image/blob/master/files/usr/share/initramfs-tools/scripts/nfs-top/00_clusterctrl
