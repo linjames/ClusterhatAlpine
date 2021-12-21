@@ -12,6 +12,12 @@ git clone https://github.com/linjames/ClusterhatAlpine
 cd ClusterhatAlpine
 ./build.sh
 ```
+## lbu commit
+  At the moment, no nfs mount yet. You can still backup using ssh from master
+  
+  ```
+  ssh root@p1 "lbu pkg -" > /var/lib/clusterctrl/nfs/p1/p1.apkovl.tar.gz
+  ```
 
 ## TODO
   1. Better overlay files, like adding nfs-utils package so lbu commit writes back to nfs
