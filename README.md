@@ -21,7 +21,7 @@ cd ClusterhatAlpine
   ```
 
 ## lbu commit
-  At the moment, no nfs mount yet. You can still backup using ssh from masters
+  At the moment, no nfs mount yet. You can still backup using ssh from controller
   ```
   ssh root@p1 "lbu pkg -" > /var/lib/clusterctrl/nfs/p1/p1.apkovl.tar.gz
   ```
