@@ -27,7 +27,11 @@ cp /boot/fixup_cd.dat .
 cp /boot/start_cd.elf .
 
 # 5. move apks out
-rm -rf apks 
+if [ -f ../apks ]; then
+	rm -rf apks
+else
+	mv apks ../
+fi
 # 6. update cmdline.txt
 cat <<EOF > cmdline.txt
 modules=loop,squashfs,u_ether,u_serial console=ttyAMA0,115200 ip=172.19.180.1::172.19.180.254:255.255.255.0:p1:usb0.10:static modloop=http://172.19.180.254/modloop-rpi alpine_repo=http://172.19.180.254/apks apkovl=http://172.19.180.254/p1.apkovl.tar.gz
@@ -81,7 +85,7 @@ cp $cwd/files/etc/init.d/hostname etc/init.d/hostname
 #	e) zip it backup
 cd /tmp
 rm headless.apkovl.tar.gz
-tar -czf p1.apkovl.tar.gz -C apkovl .
+tar -czf /var/lib/clusterctrl/nfs/boot/p1.apkovl.tar.gz -C apkovl .
 # 	f) cleanup
 rm -rf apkovl
 
@@ -102,7 +106,7 @@ mkdir -p /var/lib/clusterctrl/nfs/p{1,2,3,4}/{boot,u,w}
 
 for p_num in 1 2 3 4
 do
-	cp /tmp/p1.apkovl.tar.gz /var/lib/clusterctrl/nfs/p$p_num/p$p_num.apkovl.tar.gz
+	cp /var/lib/clusterctrl/nfs/boot/p1.apkovl.tar.gz /var/lib/clusterctrl/nfs/p$p_num/p$p_num.apkovl.tar.gz
 	ln -s /var/lib/clusterctrl/nfs/p$p_num/p$p_num.apkovl.tar.gz /var/www/html/p$p_num.apkovl.tar.gz
 	cat <<EOF >> /etc/fstab
 overlayfs	/var/lib/clusterctrl/nfs/p$p_num/boot	overlay		lowerdir=/var/lib/clusterctrl/nfs/boot,workdir=/var/lib/clusterctrl/nfs/p$p_num/w,upperdir=/var/lib/clusterctrl/nfs/p$p_num/u	0	0
@@ -112,7 +116,3 @@ EOF
 	sed -i "s/p1/p$p_num/g" /var/lib/clusterctrl/nfs/p$p_num/boot/cmdline.txt
 	echo "172.19.180.$p_num    p$p_num" >> /etc/hosts
 done
-
-rm /tmp/p1.apkovl.tar.gz
-
-
