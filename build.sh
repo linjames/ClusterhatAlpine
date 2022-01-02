@@ -26,7 +26,7 @@ cp /boot/fixup_cd.dat .
 cp /boot/start_cd.elf .
 
 # 5. move apks out
-if [ -f ../apks ]; then
+if [ -d ../apks ]; then
 	rm -rf apks
 else
 	mv apks ../
