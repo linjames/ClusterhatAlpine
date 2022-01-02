@@ -77,6 +77,7 @@ cd /tmp/apkovl
 #	c) update /etc/init.d/hostname
 mkdir -p etc/init.d
 cp $cwd/files/etc/init.d/hostname etc/init.d/hostname
+cp /etc/resolve.conf etc/resolve.conf
 mkdir -p etc/apk/protected_paths.d
 echo "+etc/init.d/hostname" > etc/apk/protected_paths.d/lbu.list
 touch etc/.default_boot_services
