@@ -33,7 +33,7 @@ else
 fi
 # 6. update cmdline.txt
 cat <<EOF > cmdline.txt
-modules=loop,squashfs,u_ether,u_serial console=ttyAMA0,115200 ip=172.19.180.1::172.19.180.254:255.255.255.0:p1:usb0.10:static modloop=http://172.19.180.254/modloop-rpi alpine_repo=http://172.19.180.254/apks apkovl=http://172.19.180.254/p1.apkovl.tar.gz ssh_key=http://172.19.180.254/cc_rsa.pub
+modules=loop,squashfs,u_ether,u_serial console=ttyAMA0,115200 ip=172.19.180.1::172.19.180.254:255.255.255.0:p1:usb0.10:static modloop=http://172.19.180.254/modloop-rpi alpine_repo=http://172.19.180.254/apks apkovl=http://172.19.180.254/p1.apkovl.tar.gz ssh_key=http://172.19.180.254/id_rsa.pub
 EOF
 
 # 7. update config.txt [remove last line, add 3 lines]
@@ -87,10 +87,10 @@ tar -czf /var/lib/clusterctrl/nfs/boot/p1.apkovl.tar.gz -C apkovl .
 # 	f) cleanup
 rm -rf apkovl
 
-if [ ! -f ~/.ssh/cc_rsa ]; then
-	ssh-keygen -t rsa -C "clusterctrl" -q -f ~/.ssh/cc_rsa -N ""
+if [ ! -f ~/.ssh/id_rsa ]; then
+	ssh-keygen -t rsa -C "clusterctrl" -q -f ~/.ssh/id_rsa -N ""
 fi
-cp ~/.ssh/cc_rsa.pub /var/www/html/
+cp ~/.ssh/id_rsa.pub /var/www/html/
 
 # 10. link lighttpd to the modloop
 rm /var/www/html/modloop-rpi
