@@ -21,16 +21,27 @@ cd ClusterhatAlpine
   ```
 
 ## lbu commit
-  At the moment, no nfs mount yet. You can still backup using ssh from controller
+  ~~~At the moment, no nfs mount yet. You can still backup using ssh from controller~~~
   ```
   ssh root@p1 "lbu pkg -" > /var/lib/clusterctrl/nfs/p1/p1.apkovl.tar.gz
   ```
 
+  Solved manually:
+  ```
+  apk add nfs-utils
+  mkdir /media/nfs
+  mount -t nfs 172.19.180.254:/var/lib/clusterctrl/nfs/p1 /media/nfs
+  tail -1 /proc/mounts >> /etc/fstab
+  sed -i "s/# LBU_MEDIA=usb/LBU_MEDIA=nfs/g" /etc/lbu/lbu.conf
+  lbu commit
+  ```
+
 ## TODO
   1. Remove hard-coded version info
-  2. Better overlay files, like adding nfs-utils package so lbu commit writes back to nfs
-  3. Switch to dropbear, and use ssh-keygen for ssh authentication
+  2. ~~~Better overlay files, like adding nfs-utils package so lbu commit writes back to nfs~~~
+  3. Switch to dropbear, ~~~and use ssh-keygen for ssh authentication~~~
   4. install proper packages and actually do something useful
+  5. combined main and community together so I can use zram-init package to setup zram swap`
 
 ## Credit
   usb_gadget function in mkinitfs/initramfs-init is copied from here: https://github.com/burtyb/clusterhat-image/blob/master/files/usr/share/initramfs-tools/scripts/nfs-top/00_clusterctrl
