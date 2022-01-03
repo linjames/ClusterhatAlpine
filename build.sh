@@ -9,7 +9,7 @@ cd /tmp
 # 1. install lighttpd
 apt-get install -y lighttpd 
 # 2. download alpine linux, and unzip into
-#rm -f alpine-rpi-3.15.0-armhf.tar.gz*
+rm -f alpine-rpi-3.15.0-armhf.tar.gz*
 wget https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/armhf/alpine-rpi-3.15.0-armhf.tar.gz
 rm -rf /var/lib/clusterctrl/nfs/boot
 mkdir /var/lib/clusterctrl/nfs/boot
@@ -33,7 +33,7 @@ else
 fi
 # 6. update cmdline.txt
 cat <<EOF > cmdline.txt
-modules=loop,squashfs,u_ether,u_serial console=ttyAMA0,115200 ip=172.19.180.1::172.19.180.254:255.255.255.0:p1:usb0.10:static modloop=http://172.19.180.254/modloop-rpi alpine_repo=http://172.19.180.254/apks apkovl=http://172.19.180.254/p1.apkovl.tar.gz ssh_key=http://172.19.180.254/id_rsa.pub
+modules=loop,squashfs,u_ether,u_serial console=ttyAMA0,115200 ip=172.19.180.1::172.19.180.254:255.255.255.0:p1:usb0.10:static modloop=http://172.19.180.254/modloop-rpi alpine_repo=http://172.19.180.254/apks apkovl=http://172.19.180.254/p1.apkovl.tar.gz
 EOF
 
 # 7. update config.txt [remove last line, add 3 lines]
@@ -70,6 +70,10 @@ find . -print0| cpio --null --create --verbose --owner root:root --format=newc|g
 cd /tmp/
 rm -rf /tmp/initfs
 
+if [ ! -f ~/.ssh/id_rsa ]; then
+        ssh-keygen -t rsa -C "clusterctrl" -q -f ~/.ssh/id_rsa -N ""
+fi
+
 # 9. update headless overlay file
 #	a) download
 mkdir /tmp/apkovl
@@ -77,9 +81,22 @@ cd /tmp/apkovl
 #	c) update /etc/init.d/hostname
 mkdir -p etc/init.d
 cp $cwd/files/etc/init.d/hostname etc/init.d/hostname
-cp /etc/resolve.conf etc/resolve.conf
+cp /etc/resolv.conf etc/resolv.conf
 mkdir -p etc/apk/protected_paths.d
 echo "+etc/init.d/hostname" > etc/apk/protected_paths.d/lbu.list
+mkdir -p root/.ssh
+cp ~/.ssh/id_rsa.pub root/.ssh/authorized_keys
+echo "+root/.ssh/authorized_keys" >> etc/apk/protected_paths.d/lbu.list
+mkdir -p etc/network
+touch etc/network/interfaces
+mkdir -p etc/runlevels/default
+ln -s /etc/init.d/dropbear etc/runlevels/default/dropbear
+ln -s /etc/init.d/ntpd etc/runlevels/default/ntpd
+cat << EOF > etc/apk/world
+alpine-base
+dropbear
+openssl
+EOF
 touch etc/.default_boot_services
 #	d) update lbu commit config to include etc/init.d/hostname
 #	e) zip it backup
@@ -87,11 +104,6 @@ cd /tmp
 tar -czf /var/lib/clusterctrl/nfs/boot/p1.apkovl.tar.gz -C apkovl .
 # 	f) cleanup
 rm -rf apkovl
-
-if [ ! -f ~/.ssh/id_rsa ]; then
-	ssh-keygen -t rsa -C "clusterctrl" -q -f ~/.ssh/id_rsa -N ""
-fi
-cp ~/.ssh/id_rsa.pub /var/www/html/
 
 # 10. link lighttpd to the modloop
 rm /var/www/html/modloop-rpi
