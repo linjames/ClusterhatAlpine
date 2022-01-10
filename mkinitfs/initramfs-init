@@ -171,7 +171,7 @@ usb_gadget() {
         ip link set dev usb0.10 mtu 1496
 
         ip link set dev usb0 up
-        ip link set dev usb0.10 up
+	ip link set dev usb0.10 up
 }
 
 

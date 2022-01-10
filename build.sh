@@ -1,6 +1,6 @@
 #! /usr/bin/bash
 # save current directory
-cwd=$(pwd)
+SCRIPTPATH=$(dirname "$0")
 
 cd /tmp
 # 0. for my server
@@ -53,12 +53,12 @@ cd /tmp/initfs
 mv /var/lib/clusterctrl/nfs/boot/boot/initramfs-rpi /var/lib/clusterctrl/nfs/boot/boot/initramfs-rpi.old
 zcat /var/lib/clusterctrl/nfs/boot/boot/initramfs-rpi.old|cpio -idmv
 #	b) update init
-cp "$cwd"/mkinitfs/initramfs-init init
+cp "$SCRIPTPATH"/mkinitfs/initramfs-init init
 #	c) copy in modules
 mkdir modloop
 mount -t squashfs /var/lib/clusterctrl/nfs/boot/boot/modloop-rpi /tmp/initfs/modloop
 cd modloop/modules/5.15.4-0-rpi
-rsync -av --files-from $cwd/mkinitfs/features.d/usb_g.modules . /tmp/initfs/lib/modules/5.15.4-0-rpi
+rsync -av --files-from $SCRIPTPATH/mkinitfs/features.d/usb_g.modules . /tmp/initfs/lib/modules/5.15.4-0-rpi
 #	d) zip backup
 cd /tmp/initfs
 umount /tmp/initfs/modloop
@@ -80,7 +80,7 @@ mkdir /tmp/apkovl
 cd /tmp/apkovl
 #	c) update /etc/init.d/hostname
 mkdir -p etc/init.d
-cp $cwd/files/etc/init.d/hostname etc/init.d/hostname
+cp $SCRIPTPATH/files/etc/init.d/hostname etc/init.d/hostname
 cp /etc/resolv.conf etc/resolv.conf
 mkdir -p etc/apk/protected_paths.d
 echo "+etc/init.d/hostname" > etc/apk/protected_paths.d/lbu.list
