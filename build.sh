@@ -37,7 +37,9 @@ modules=loop,squashfs,u_ether,u_serial console=ttyAMA0,115200 ip=172.19.180.1::1
 EOF
 
 # 7. update config.txt [remove last line, add 3 lines]
-mv config.txt config.old
+if [ ! -f config.old ]; then
+	mv config.txt config.old
+fi
 head -n -1 config.old > config.txt
 cat <<EOF >> config.txt
 dtoverlay=dwc2,dr_mode=peripheral
@@ -45,90 +47,6 @@ enable_uart=1
 gpu_mem=16
 EOF
 
-#8. update initramfs-rpi
-#	a) unzip, 
-rm -rf /tmp/initfs
-mkdir /tmp/initfs
-cd /tmp/initfs
-mv /var/lib/clusterctrl/nfs/boot/boot/initramfs-rpi /var/lib/clusterctrl/nfs/boot/boot/initramfs-rpi.old
-zcat /var/lib/clusterctrl/nfs/boot/boot/initramfs-rpi.old|cpio -idmv
-#	b) update init
-cp "$SCRIPTPATH"/mkinitfs/initramfs-init init
-#	c) copy in modules
-mkdir modloop
-mount -t squashfs /var/lib/clusterctrl/nfs/boot/boot/modloop-rpi /tmp/initfs/modloop
-cd modloop/modules/5.15.4-0-rpi
-rsync -av --files-from $SCRIPTPATH/mkinitfs/features.d/usb_g.modules . /tmp/initfs/lib/modules/5.15.4-0-rpi
-#	d) zip backup
-cd /tmp/initfs
-umount /tmp/initfs/modloop
-rmdir /tmp/initfs/modloop
-depmod -b /tmp/initfs/ 5.15.4-0-rpi
-find . -print0| cpio --null --create --verbose --owner root:root --format=newc|gzip -9 > /var/lib/clusterctrl/nfs/boot/boot/initramfs-rpi
+$SCRIPTPATH/initramfs.sh
+$SCRIPTPATH/overlay.sh
 
-#	e) cleanup
-cd /tmp/
-rm -rf /tmp/initfs
-
-if [ ! -f ~/.ssh/id_rsa ]; then
-        ssh-keygen -t rsa -C "clusterctrl" -q -f ~/.ssh/id_rsa -N ""
-fi
-
-# 9. update headless overlay file
-#	a) download
-mkdir /tmp/apkovl
-cd /tmp/apkovl
-#	c) update /etc/init.d/hostname
-mkdir -p etc/init.d
-cp $SCRIPTPATH/files/etc/init.d/hostname etc/init.d/hostname
-cp /etc/resolv.conf etc/resolv.conf
-mkdir -p etc/apk/protected_paths.d
-echo "+etc/init.d/hostname" > etc/apk/protected_paths.d/lbu.list
-mkdir -p root/.ssh
-cp ~/.ssh/id_rsa.pub root/.ssh/authorized_keys
-echo "+root/.ssh/authorized_keys" >> etc/apk/protected_paths.d/lbu.list
-mkdir -p etc/network
-touch etc/network/interfaces
-mkdir -p etc/runlevels/default
-ln -s /etc/init.d/dropbear etc/runlevels/default/dropbear
-ln -s /etc/init.d/ntpd etc/runlevels/default/ntpd
-cat << EOF > etc/apk/world
-alpine-base
-dropbear
-openssl
-EOF
-touch etc/.default_boot_services
-#	d) update lbu commit config to include etc/init.d/hostname
-#	e) zip it backup
-cd /tmp
-tar -czf /var/lib/clusterctrl/nfs/boot/p1.apkovl.tar.gz -C apkovl .
-# 	f) cleanup
-rm -rf apkovl
-
-# 10. link lighttpd to the modloop
-rm /var/www/html/modloop-rpi
-rm /var/www/html/apks
-rm /var/www/html/p{1,2,3,4}.apkovl.tar.gz
-ln -s /var/lib/clusterctrl/nfs/boot/boot/modloop-rpi /var/www/html/modloop-rpi
-ln -s /var/lib/clusterctrl/nfs/apks/ /var/www/html/apks
-
-# 11 mount boot 
-cd /var/lib/clusterctrl/nfs
-
-sed -i '/nfs\/p[1-4]\/boot/d' /etc/fstab
-umount /var/lib/clusterctrl/nfs/p{1,2,3,4}/boot
-rm -rf /var/lib/clusterctrl/nfs/p{1,2,3,4}
-mkdir -p /var/lib/clusterctrl/nfs/p{1,2,3,4}/{boot,u,w}
-
-for p_num in 1 2 3 4
-do
-	cp /var/lib/clusterctrl/nfs/boot/p1.apkovl.tar.gz /var/lib/clusterctrl/nfs/p$p_num/p$p_num.apkovl.tar.gz
-	ln -s /var/lib/clusterctrl/nfs/p$p_num/p$p_num.apkovl.tar.gz /var/www/html/p$p_num.apkovl.tar.gz
-	cat <<EOF >> /etc/fstab
-overlayfs	/var/lib/clusterctrl/nfs/p$p_num/boot	overlay		lowerdir=/var/lib/clusterctrl/nfs/boot,workdir=/var/lib/clusterctrl/nfs/p$p_num/w,upperdir=/var/lib/clusterctrl/nfs/p$p_num/u	0	0
-EOF
-	mount /var/lib/clusterctrl/nfs/p$p_num/boot
-	sed -i "s/180.1/180.$p_num/g" /var/lib/clusterctrl/nfs/p$p_num/boot/cmdline.txt
-	sed -i "s/p1/p$p_num/g" /var/lib/clusterctrl/nfs/p$p_num/boot/cmdline.txt
-	echo "172.19.180.$p_num    p$p_num" >> /etc/hosts
-done
