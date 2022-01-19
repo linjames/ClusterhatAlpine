@@ -14,10 +14,10 @@ mkdir /tmp/apkovl
 cd /tmp/apkovl
 mkdir -p etc/network
 cat << EOF > etc/network/interfaces
-auto lo usb0
-
+auto lo
 iface lo inet loopback
 
+auto usb0
 iface usb0 inet dhcp
 EOF
 
